@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drs' Visual Arts Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        header p {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        .tab {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .tab.active {
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 20px 0;
+        }
+        .settings-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-dot.green { background: #00e676; }
+        .status-dot.red { background: #ff4444; }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        .modal-box input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        .modal-box input::placeholder { color: #666; }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .modal-actions button {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-save {
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            color: #fff;
+        }
+        .btn-cancel {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .panel {
+            display: none;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .panel.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        textarea, select, input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        textarea:focus, select:focus, input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .price-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0,212,255,0.2);
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #00d4ff;
+            margin-left: 10px;
+        }
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result img, .result video {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .status.pending {
+            background: rgba(255,193,7,0.2);
+            color: #ffc107;
+        }
+        .status.success {
+            background: rgba(40,167,69,0.2);
+            color: #28a745;
+        }
+        .status.error {
+            background: rgba(220,53,69,0.2);
+            color: #dc3545;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .gallery-item .info {
+            padding: 15px;
+        }
+        .gallery-item .info h4 {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .gallery-item .info p {
+            color: #888;
+            font-size: 0.8rem;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        .loading.show {
+            display: block;
+        }
+        .mj-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .mj-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mj-btn:hover {
+            background: rgba(255,255,255,0.22);
+        }
+        .mj-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        .helper-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 18px;
+        }
+        .helper-card h3 {
+            margin-bottom: 10px;
+            color: #00d4ff;
+            font-size: 1rem;
+        }
+        .helper-card p, .helper-card li {
+            color: #cfcfcf;
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+        .helper-card ul {
+            padding-left: 18px;
+        }
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .mini-btn {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            cursor: pointer;
+        }
+        .mini-btn:hover {
+            background: rgba(255,255,255,0.16);
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-bar">
+            <div></div>
+            <header>
+                <h1>🎨 Drs' Visual Arts Center</h1>
+                <p>AI Image & Video Generation Platform</p>
+            </header>
+            <button class="settings-btn" onclick="openSettings()">
+                ⚙️ API Settings <span class="status-dot red" id="api-status-dot"></span>
+            </button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="mjstudio" onclick="switchTab('mjstudio', this)">🎛️ MJ Studio</button>
+            <button class="tab" data-tab="kling" onclick="switchTab('kling', this)">🎬 Kling Studio</button>
+            <button class="tab" data-tab="image" onclick="switchTab('image', this)">🖼️ Image Gen</button>
+            <button class="tab" data-tab="nanobanana" onclick="switchTab('nanobanana', this)">🍌 NanoBanana</button>
+            <button class="tab" data-tab="edit" onclick="switchTab('edit', this)">✏️ MJ Edit</button>
+            <button class="tab" data-tab="video" onclick="switchTab('video', this)">🎬 Video Gen</button>
+            <button class="tab" data-tab="gallery" onclick="switchTab('gallery', this)">📁 Gallery</button>
+        </div>
+
+        <!-- MJ Studio Panel -->
+        <div id="mjstudio-panel" class="panel active">
+            <div class="helper-card">
+                <h3>Midjourney Studio</h3>
+                <p>Core Midjourney workflow in one place: generate, U1-U4 upscale, V1-V4 variations, Reroll, and edit (add elements / expand / change ratio). Default <strong>Relax</strong> mode, priced at <strong>¥1.00</strong>.</p>
+                <div class="quick-actions">
+                    <button class="mini-btn" onclick="fillMJPrompt('cinematic portrait of a young woman, golden hour, film still, ultra detailed')">Example: Cinematic Portrait</button>
+                    <button class="mini-btn" onclick="fillMJPrompt('a futuristic city street in heavy rain, neon reflections, dramatic lighting')">Example: Cyberpunk City</button>
+                    <button class="mini-btn" onclick="fillMJEditPrompt('Expand the right side with more environment details, convert to 9:16 portrait')">Example: Expand & Crop</button>
+                </div>
+            </div>
+
+            <div class="helper-card">
+                <h3>How to Use</h3>
+                <ul>
+                    <li><strong>Generate:</strong> Enter prompt and aspect ratio below, click “Generate Midjourney Image”.</li>
+                    <li><strong>Upscale / Vary:</strong> After generation, U1-U4 / V1-V4 / REROLL buttons appear automatically.</li>
+                    <li><strong>Edit:</strong> Send the current result to the edit panel to add elements, change ratio, or expand.</li>
+                    <li><strong>Gallery integration:</strong> Images from the Gallery can be sent directly to MJ Edit — no manual URL copying.</li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <div>
+                    <!-- Reference images -->
+                    <div class="form-group">
+                        <label>🖼️ Reference Images (optional, max 4)</label>
+                        <div id="mjstudio-ref-images" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+                        <div class="quick-actions">
+                            <button class="mini-btn" onclick="addRefImage('mjstudio', 'file')">📁 Upload</button>
+                            <button class="mini-btn" onclick="addRefImage('mjstudio', 'url')">🔗 Paste URL</button>
+                            <button class="mini-btn" onclick="addRefImage('mjstudio', 'gallery')">📂 Gallery</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>MJ Prompt</label>
+                        <textarea id="mjstudio-prompt" placeholder="e.g. A lone swordsman standing on a cliff above the sea, storm clouds, cinematic, dramatic light, highly detailed"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Aspect Ratio</label>
+                            <select id="mjstudio-aspect">
+                                <option value="1:1">1:1 Square</option>
+                                <option value="2:3">2:3 Portrait</option>
+                                <option value="3:2">3:2 Landscape</option>
+                                <option value="9:16">9:16 Vertical</option>
+                                <option value="16:9">16:9 Widescreen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Info</label>
+                            <input value="Relax mode / ¥1.00 / 20s polling" readonly>
+                        </div>
+                    </div>
+                    <button class="generate-btn" onclick="generateMJStudioImage()">Generate Midjourney Image</button>
+                </div>
+                <div>
+                    <div class="helper-card">
+                        <h3>Controls</h3>
+                        <ul>
+                            <li><strong>U1-U4:</strong> Upscale the corresponding quadrant.</li>
+                            <li><strong>V1-V4:</strong> Generate variations based on that quadrant.</li>
+                            <li><strong>REROLL:</strong> Re-roll with the same prompt.</li>
+                            <li><strong>MJ Edit:</strong> Add elements, expand, recompose, change ratio.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading" id="mjstudio-loading">
+                <div class="spinner"></div>
+                <p>Generating Midjourney image...</p>
+            </div>
+
+            <div class="result" id="mjstudio-result">
+                <div class="status" id="mjstudio-status"></div>
+                <img id="mjstudio-output" src="" alt="Midjourney result">
+                <div class="mj-actions" id="mjstudio-actions" style="display:none;"></div>
+                <div class="quick-actions" id="mjstudio-edit-actions" style="display:none; margin-top:12px;">
+                    <button class="mini-btn" onclick="sendCurrentMJToEdit()">✏️ Send to MJ Edit</button>
+                    <button class="mini-btn" onclick="useCurrentMJInEdit('Expand the frame with more environment details, keep original style')">🪄 Expand Edit</button>
+                    <button class="mini-btn" onclick="useCurrentMJInEdit('Add more scene elements and layers while keeping the subject unchanged')">➕ Add Elements</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kling Studio Panel -->
+        <div id="kling-panel" class="panel">
+            <div class="helper-card">
+                <h3>🎬 Kling Studio</h3>
+                <p>All Kling features in one place: <strong>Video Generation</strong> (text-to-video, image-to-video), <strong>Image Generation</strong>, <strong>Video-to-Audio</strong>, <strong>Lip Sync</strong>. Select assets directly from the Gallery.</p>
+                <div class="quick-actions">
+                    <button class="mini-btn" onclick="switchKlingMode('video')">🎬 Video</button>
+                    <button class="mini-btn" onclick="switchKlingMode('image')">🖼️ Image</button>
+                    <button class="mini-btn" onclick="switchKlingMode('audio')">🔊 Video-to-Audio</button>
+                    <button class="mini-btn" onclick="switchKlingMode('lip')">👄 Lip Sync</button>
+                </div>
+            </div>
+
+            <!-- Kling Mode Selection -->
+            <div class="form-group">
+                <label>Function</label>
+                <select id="kling-mode" onchange="onKlingModeChange()">
+                    <option value="video-t2v">🎬 Text-to-Video (T2V)</option>
+                    <option value="video-i2v">🖼️ Image-to-Video (I2V)</option>
+                    <option value="image">🖼️ Image Generation</option>
+                    <option value="video-to-audio">🔊 Video-to-Audio</option>
+                    <option value="lip-sync">👄 Lip Sync / Digital Human</option>
+                </select>
+            </div>
+
+            <!-- Prompt -->
+            <div class="form-group">
+                <label id="kling-prompt-label">Prompt</label>
+                <textarea id="kling-prompt" placeholder="Describe what you want to generate..."></textarea>
+            </div>
+
+            <!-- Media Input (I2V / Lip Sync) -->
+            <div class="form-group" id="kling-media-group" style="display:none;">
+                <label id="kling-media-label">Image URL</label>
+                <input id="kling-media-url" placeholder="Enter image URL or select from Gallery">
+                <div class="quick-actions" style="margin-top:8px;">
+                    <button class="mini-btn" onclick="loadFromGallery('kling-media-url', 'image')">📁 Select from Gallery</button>
+                </div>
+            </div>
+
+            <!-- Video Input (Video-to-Audio / Extend) -->
+            <div class="form-group" id="kling-video-group" style="display:none;">
+                <label>Video URL</label>
+                <input id="kling-video-url" placeholder="Enter video URL or select from Gallery">
+                <div class="quick-actions" style="margin-top:8px;">
+                    <button class="mini-btn" onclick="loadFromGallery('kling-video-url', 'video')">📁 Select from Gallery</button>
+                </div>
+            </div>
+
+            <!-- Audio Input (Lip Sync) -->
+            <div class="form-group" id="kling-audio-group" style="display:none;">
+                <label>Audio URL</label>
+                <input id="kling-audio-url" placeholder="Enter audio URL">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Model</label>
+                    <select id="kling-model">
+                        <option value="kling-v2-6">Kling V2.6 <span class="price-tag">¥2.50</span></option>
+                        <option value="kling-o1">Kling O1 <span class="price-tag">¥0.80</span></option>
+                        <option value="kling-v2-5-turbo">Kling V2.5 Turbo <span class="price-tag">¥1.50</span></option>
+                        <option value="kling-v2-1">Kling V2.1 <span class="price-tag">¥2.00</span></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Aspect Ratio</label>
+                    <select id="kling-aspect">
+                        <option value="16:9">16:9 Widescreen</option>
+                        <option value="9:16">9:16 Vertical</option>
+                        <option value="1:1">1:1 Square</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select id="kling-duration">
+                        <option value="5">5 seconds</option>
+                        <option value="10">10 seconds</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Camera Motion</label>
+                    <select id="kling-camera">
+                        <option value="">None</option>
+                        <option value="zoom_in">Zoom In</option>
+                        <option value="zoom_out">Zoom Out</option>
+                        <option value="pan_left">Pan Left</option>
+                        <option value="pan_right">Pan Right</option>
+                        <option value="tilt_up">Tilt Up</option>
+                        <option value="tilt_down">Tilt Down</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="generate-btn" onclick="generateKling()">🚀 Submit Kling Task</button>
+
+            <div class="loading" id="kling-loading">
+                <div class="spinner"></div>
+                <p>Submitting Kling task...</p>
+            </div>
+
+            <div class="result" id="kling-result">
+                <div class="status" id="kling-status"></div>
+                <div id="kling-output-container"></div>
+                <div class="quick-actions" id="kling-follow-actions" style="display:none; margin-top:12px;">
+                    <button class="mini-btn" onclick="useKlingResultForAudio()">🔊 Generate Audio from This</button>
+                    <button class="mini-btn" onclick="useKlingResultForLipSync()">👄 Lip Sync on This</button>
+                    <button class="mini-btn" onclick="extendKlingVideo()">⏱️ Extend Video</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Generation Panel -->
+        <div id="image-panel" class="panel">
+            <div class="form-group">
+                <label>Prompt</label>
+                <textarea id="image-prompt" placeholder="Describe the image you want to generate..."></textarea>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Model</label>
+                    <select id="image-model">
+                        <option value="flux">Flux <span class="price-tag">¥0.01</span></option>
+                        <option value="kling-image-v2-1">Kling Image 2.1 <span class="price-tag">¥0.15</span></option>
+                        <option value="midjourney">Midjourney <span class="price-tag">¥1.00</span></option>
+                        <option value="nano-banana-pro">NanoBanana Pro <span class="price-tag">¥0.20</span></option>
+                        <option value="ideogram-v3">Ideogram V3 <span class="price-tag">¥0.15</span></option>
+                        <option value="recraftv3">Recraft V3 <span class="price-tag">¥0.12</span></option>
+                        <option value="openai-image">OpenAI GPT Image 1 <span class="price-tag">¥0.15</span></option>
+                        <option value="gpt-image-1.5">OpenAI GPT Image 1.5 <span class="price-tag">¥0.15</span></option>
+                        <option value="seedream-5">Seedream 5.0 <span class="price-tag">¥0.10</span></option>
+                        <option value="grok-4.1-image">Grok 4.1 Image <span class="price-tag">¥0.10</span></option>
+                        <option value="grok-4.2-image">Grok 4.2 Image <span class="price-tag">¥0.12</span></option>
+                        <option value="seedream-3.0">Seedream 3.0 <span class="price-tag">¥0.10</span></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Image Size</label>
+                    <select id="image-size">
+                        <option value="1024x1024">1024 × 1024 (Square)</option>
+                        <option value="1024x1536">1024 × 1536 (Portrait)</option>
+                        <option value="1536x1024">1536 × 1024 (Landscape)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="generate-btn" onclick="generateImage()">Generate Image</button>
+            
+            <div class="loading" id="image-loading">
+                <div class="spinner"></div>
+                <p>Generating image...</p>
+            </div>
+            
+            <div class="result" id="image-result">
+                <div class="status" id="image-status"></div>
+                <img id="image-output" src="" alt="Generated image">
+                <div class="mj-actions" id="mj-actions" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- MJ Edit Panel -->
+        <div id="edit-panel" class="panel">
+            <div class="form-group">
+                <label>Original Image URL</label>
+                <input id="edit-image-url" placeholder="Enter the Midjourney image URL to edit">
+            </div>
+            <div class="form-group">
+                <label>Edit Prompt</label>
+                <textarea id="edit-prompt" placeholder="e.g. Add a glass skyscraper on the right; expand to 9:16; add sunset clouds..."></textarea>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Target Ratio</label>
+                    <select id="edit-aspect">
+                        <option value="1:1">1:1</option>
+                        <option value="2:3">2:3</option>
+                        <option value="3:2">3:2</option>
+                        <option value="9:16">9:16</option>
+                        <option value="16:9">16:9</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mask Base64 (optional)</label>
+                    <input id="edit-mask" placeholder="Enter maskBase64 for partial edits (optional)">
+                </div>
+            </div>
+            <button class="generate-btn" onclick="generateMJEdit()">Submit MJ Edit</button>
+
+            <div class="loading" id="edit-loading">
+                <div class="spinner"></div>
+                <p>Submitting Midjourney edit...</p>
+            </div>
+
+            <div class="result" id="edit-result">
+                <div class="status" id="edit-status"></div>
+                <img id="edit-output" src="" alt="Edited image">
+            </div>
+        </div>
+
+        <!-- NanoBanana Panel -->
+        <div id="nanobanana-panel" class="panel">
+            <div class="helper-card">
+                <h3>NanoBanana Pro 4K</h3>
+                <p>High-quality generation and editing. Default model <strong>nano-banana-pro-4k</strong>, priced at <strong>¥2.00</strong>. Editing does not require a mask.</p>
+            </div>
+            <div class="row">
+                <div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <select id="nanobanana-mode" onchange="toggleNanoBananaMode()">
+                            <option value="generate">Text to Image</option>
+                            <option value="edit">Edit Existing Image</option>
+                        </select>
+                    </div>
+                    <!-- Reference images -->
+                    <div class="form-group">
+                        <label>🖼️ Reference Images (max 4)</label>
+                        <div id="nanobanana-ref-images" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;"></div>
+                        <div class="quick-actions">
+                            <button class="mini-btn" onclick="addRefImage('nanobanana', 'file')">📁 Upload</button>
+                            <button class="mini-btn" onclick="addRefImage('nanobanana', 'url')">🔗 Paste URL</button>
+                            <button class="mini-btn" onclick="addRefImage('nanobanana', 'gallery')">📂 Gallery</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Prompt</label>
+                        <textarea id="nanobanana-prompt" placeholder="e.g. Enhance metallic texture, cinematic lighting, preserve composition"></textarea>
+                    </div>
+                    <div class="form-group" id="nanobanana-image-group" style="display:none;">
+                        <label>Original Image URL</label>
+                        <input id="nanobanana-image-url" placeholder="Enter the image URL to edit">
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Aspect Ratio</label>
+                            <select id="nanobanana-aspect">
+                                <option value="1:1">1:1 Square</option>
+                                <option value="2:3">2:3 Portrait</option>
+                                <option value="3:2">3:2 Landscape</option>
+                                <option value="9:16">9:16 Vertical</option>
+                                <option value="16:9">16:9 Widescreen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Info</label>
+                            <input value="NanoBanana / ¥2.00 / prompt + aspect" readonly>
+                        </div>
+                    </div>
+                    <button class="generate-btn" onclick="generateNanoBanana()">Submit NanoBanana</button>
+                </div>
+                <div>
+                    <div class="helper-card">
+                        <h3>Tips</h3>
+                        <ul>
+                            <li><strong>Text to Image:</strong> Enter prompt + aspect ratio directly.</li>
+                            <li><strong>Edit:</strong> Provide original image URL + prompt + aspect ratio. Mask is optional.</li>
+                            <li><strong>Best for:</strong> Style enhancement, material refinement, detail redraw, high-quality output.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="loading" id="nanobanana-loading">
+                <div class="spinner"></div>
+                <p>Submitting NanoBanana task...</p>
+            </div>
+            <div class="result" id="nanobanana-result">
+                <div class="status" id="nanobanana-status"></div>
+                <img id="nanobanana-output" src="" alt="NanoBanana result">
+            </div>
+        </div>
+
+        <!-- Video Generation Panel -->
+        <div id="video-panel" class="panel">
+            <div class="form-group">
+                <label>Prompt</label>
+                <textarea id="video-prompt" placeholder="Describe the video you want to generate..."></textarea>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Model</label>
+                    <select id="video-model">
+                        <option value="kling-o1">Kling O1 <span class="price-tag">¥0.80</span></option>
+                        <option value="wan2.2-flash">Wan 2.2 Flash <span class="price-tag">¥0.80</span></option>
+                        <option value="kling-v2-6">Kling V2.6 <span class="price-tag">¥2.50</span></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select id="video-duration">
+                        <option value="5">5 seconds</option>
+                        <option value="10">10 seconds</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Aspect Ratio</label>
+                <select id="video-ratio">
+                    <option value="16:9">16:9 Widescreen</option>
+                    <option value="9:16">9:16 Vertical</option>
+                    <option value="1:1">1:1 Square</option>
+                </select>
+            </div>
+            <button class="generate-btn" onclick="generateVideo()">Generate Video</button>
+            
+            <div class="loading" id="video-loading">
+                <div class="spinner"></div>
+                <p>Generating video, this may take a few minutes...</p>
+            </div>
+            
+            <div class="result" id="video-result">
+                <div class="status" id="video-status"></div>
+                <video id="video-output" controls></video>
+            </div>
+        </div>
+
+        <!-- Gallery Panel -->
+        <div id="gallery-panel" class="panel">
+            <div class="gallery" id="gallery-grid">
+                <!-- Dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { mjImagine, mjUpscale, mjVariation, mjBlend, mjDescribe, checkMJStatus } from "./src/api/midjourney.js";
+        import { generateKlingVideo, generateKlingImage, checkKlingStatus } from "./src/api/kling.js";
+        import { generateRunwayVideo, checkRunwayStatus } from "./src/api/runway.js";
+        import { generateWanVideo, checkWanStatus } from "./src/api/wan.js";
+        import { nanoBananaGenerate, nanoBananaEdit, checkNanoBananaStatus } from "./src/api/nanobanana.js";
+        import { proxyGenerate, proxyStatus } from "./src/api/client.js";
+
+        // ==================== API Settings ====================
+        const DEFAULT_API_BASE = "https://api.bltcy.ai";
+        function getApiBase() { return localStorage.getItem("api_base_url") || DEFAULT_API_BASE; }
+        function getApiKey() { return localStorage.getItem("api_key") || ""; }
+
+        function updateApiStatusDot() {
+            const dot = document.getElementById("api-status-dot");
+            if (!dot) return;
+            if (getApiKey()) { dot.className = "status-dot green"; }
+            else { dot.className = "status-dot red"; }
+        }
+
+        function openSettings() {
+            document.getElementById("settings-api-url").value = getApiBase();
+            document.getElementById("settings-api-key").value = getApiKey();
+            document.getElementById("settings-default-aspect").value = localStorage.getItem("default_aspect") || "16:9";
+            document.getElementById("settings-default-duration").value = localStorage.getItem("default_duration") || "5";
+            document.getElementById("settings-default-image-model").value = localStorage.getItem("default_image_model") || "flux";
+            document.getElementById("settings-default-video-model").value = localStorage.getItem("default_video_model") || "kling-o1";
+            document.getElementById("settings-gallery-max").value = localStorage.getItem("gallery_max") || "50";
+            document.getElementById("settings-msg").textContent = "";
+            document.getElementById("settings-api-test-msg").textContent = "";
+            document.getElementById("settings-modal").classList.add("active");
+        }
+
+        function closeSettings() {
+            document.getElementById("settings-modal").classList.remove("active");
+        }
+
+        function saveSettings() {
+            const url = document.getElementById("settings-api-url").value.trim().replace(/\/+$/, "");
+            const key = document.getElementById("settings-api-key").value.trim();
+            if (!key) { document.getElementById("settings-msg").textContent = "Please enter an API Key"; document.getElementById("settings-msg").style.color = "#ff4444"; return; }
+            localStorage.setItem("api_base_url", url || DEFAULT_API_BASE);
+            localStorage.setItem("api_key", key);
+            localStorage.setItem("default_aspect", document.getElementById("settings-default-aspect").value);
+            localStorage.setItem("default_duration", document.getElementById("settings-default-duration").value);
+            localStorage.setItem("default_image_model", document.getElementById("settings-default-image-model").value);
+            localStorage.setItem("default_video_model", document.getElementById("settings-default-video-model").value);
+            localStorage.setItem("gallery_max", document.getElementById("settings-gallery-max").value);
+            document.getElementById("settings-msg").textContent = "Settings saved";
+            document.getElementById("settings-msg").style.color = "#00e676";
+            updateApiStatusDot();
+            setTimeout(closeSettings, 800);
+        }
+
+        function requireApiKey() {
+            if (!getApiKey()) { openSettings(); return false; }
+            return true;
+        }
+
+        async function testApiConnection() {
+            const msg = document.getElementById("settings-api-test-msg");
+            const url = document.getElementById("settings-api-url").value.trim().replace(/\/+$/, "") || DEFAULT_API_BASE;
+            const key = document.getElementById("settings-api-key").value.trim();
+            if (!key) { msg.textContent = "Please enter an API Key first"; msg.style.color = "#ff4444"; return; }
+            msg.textContent = "Testing connection..."; msg.style.color = "#ffc107";
+            try {
+                const res = await fetch(`${url}/v1/models`, { headers: { "Authorization": `Bearer ${key}` } });
+                if (res.ok) { msg.textContent = "Connection successful!"; msg.style.color = "#00e676"; }
+                else { msg.textContent = `Failed: HTTP ${res.status}`; msg.style.color = "#ff4444"; }
+            } catch (err) { msg.textContent = `Error: ${err.message}`; msg.style.color = "#ff4444"; }
+        }
+
+        function exportGallery() {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            if (gallery.length === 0) { alert('Gallery is empty'); return; }
+            const blob = new Blob([JSON.stringify(gallery, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `openvideoagent-gallery-${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function clearGallery() {
+            if (!confirm('Clear all gallery items? This cannot be undone.')) return;
+            localStorage.removeItem('gallery');
+            document.getElementById('settings-msg').textContent = 'Gallery cleared';
+            document.getElementById('settings-msg').style.color = '#00e676';
+            loadGallery();
+        }
+
+        function resetAllSettings() {
+            if (!confirm('Reset all settings to defaults? This cannot be undone.')) return;
+            localStorage.removeItem('api_base_url');
+            localStorage.removeItem('api_key');
+            localStorage.removeItem('default_aspect');
+            localStorage.removeItem('default_duration');
+            localStorage.removeItem('default_image_model');
+            localStorage.removeItem('default_video_model');
+            localStorage.removeItem('gallery_max');
+            localStorage.removeItem('gallery');
+            updateApiStatusDot();
+            document.getElementById('settings-msg').textContent = 'All settings reset';
+            document.getElementById('settings-msg').style.color = '#00e676';
+            setTimeout(closeSettings, 800);
+        }
+
+        updateApiStatusDot();
+
+        let currentMJ = {
+            taskId: null,
+            buttons: [],
+            prompt: null,
+            aspect: "1:1",
+            imageUrl: null,
+            originalUrl: null
+        };
+        
+        function switchTab(tab, btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            const targetBtn = btn || document.querySelector(`.tab[data-tab="${tab}"]`);
+            if (targetBtn) targetBtn.classList.add('active');
+            document.getElementById(tab + '-panel').classList.add('active');
+            
+            if (tab === 'gallery') {
+                loadGallery();
+            }
+        }
+        
+        function fillMJPrompt(text) {
+            document.getElementById('mjstudio-prompt').value = text;
+        }
+        function fillMJEditPrompt(text) {
+            switchTab('edit');
+            document.getElementById('edit-prompt').value = text;
+            document.getElementById('edit-prompt').focus();
+        }
+
+        const modeEl = document.getElementById('nanobanana-mode');
+        if (modeEl) {
+            modeEl.addEventListener('change', toggleNanoBananaMode);
+            toggleNanoBananaMode();
+        }
+        
+        let mjStudioState = { taskId: null, buttons: [], prompt: null, aspect: "1:1", imageUrl: null, originalUrl: null };
+        
+        async function generateMJStudioImage() {
+            const prompt = document.getElementById('mjstudio-prompt').value;
+            const aspect = document.getElementById('mjstudio-aspect').value;
+            const refImages = getRefImages('mjstudio');
+            if (!prompt) { alert('Please enter a prompt'); return; }
+            
+            document.getElementById('mjstudio-loading').classList.add('show');
+            document.getElementById('mjstudio-result').classList.remove('show');
+            document.getElementById('mjstudio-actions').style.display = 'none';
+            document.getElementById('mjstudio-edit-actions').style.display = 'none';
+            
+            try {
+                document.getElementById('mjstudio-status').className = 'status pending';
+                document.getElementById('mjstudio-status').textContent = '⏳ Midjourney submitting (Relax mode, usually 1-2 min)...';
+                document.getElementById('mjstudio-result').classList.add('show');
+                
+                const data = await mjImagine({ prompt, aspect, noWait: true, images: refImages.length > 0 ? refImages : undefined });
+                if (!data.success || !data.jobId) throw new Error('Midjourney submission failed');
+
+                mjStudioState = { taskId: data.jobId, buttons: [], prompt, aspect, imageUrl: null, originalUrl: null, lastAction: 'imagine', lastButton: null };
+                document.getElementById('mjstudio-status').textContent = `⏳ Midjourney task submitted: ${data.jobId}, checking every 20s...`;
+                await pollMJStudioStatus(data.jobId);
+            } catch (err) {
+                document.getElementById('mjstudio-status').className = 'status error';
+                document.getElementById('mjstudio-status').textContent = '❌ ' + err.message;
+            } finally {
+                document.getElementById('mjstudio-loading').classList.remove('show');
+            }
+        }
+        
+        async function pollMJStudioStatus(taskId) {
+            const check = async () => {
+                try {
+                    const data = await checkMJStatus(taskId);
+                    if (data.status === 'completed') {
+                        document.getElementById('mjstudio-status').className = 'status success';
+                        document.getElementById('mjstudio-status').textContent = `✅ Midjourney complete! Price: ${data.price || '¥1.00'}`;
+                        document.getElementById('mjstudio-output').src = data.imageUrl;
+                        document.getElementById('mjstudio-result').classList.add('show');
+                        mjStudioState.taskId = taskId;
+                        mjStudioState.buttons = data.buttons || [];
+                        mjStudioState.imageUrl = data.imageUrl;
+                        mjStudioState.originalUrl = data.originalUrl || data.imageUrl;
+                        renderMJStudioButtons();
+                        saveToGallery('image', data.imageUrl, mjStudioState.prompt, 'midjourney');
+                    } else if (data.status === 'failure' || data.status === 'failed' || data.error) {
+                        throw new Error(data.message || data.error || 'Midjourney generation failed');
+                    } else {
+                        document.getElementById('mjstudio-status').className = 'status pending';
+                        document.getElementById('mjstudio-status').textContent = `⏳ Midjourney generating (task ${taskId}), checking in 20s...`;
+                        setTimeout(check, 20000);
+                    }
+                } catch (err) {
+                    document.getElementById('mjstudio-status').className = 'status error';
+                    document.getElementById('mjstudio-status').textContent = '❌ ' + err.message;
+                }
+            };
+            check();
+        }
+        
+        function renderMJStudioButtons() {
+            const container = document.getElementById('mjstudio-actions');
+            const isUpscaledSingle = /upscale|upsample/i.test(mjStudioState.lastAction || '') || /^U[1-4]$/i.test(mjStudioState.lastButton || '');
+            const labels = ['U1','U2','U3','U4','V1','V2','V3','V4','REROLL'];
+            const helper = isUpscaledSingle
+                ? `<div style="width:100%;margin-bottom:10px;color:#8fd3ff;font-size:0.92rem;">This is a single upscaled image. You can send it directly to MJ Edit.</div>`
+                : `<div style="width:100%;margin-bottom:10px;color:#ffd166;font-size:0.92rem;">This is a 4-quadrant grid. To edit a specific one, click U1-U4 to upscale it first, then use MJ Edit.</div>`;
+            container.innerHTML = helper + labels.map(l => `<button class="mj-btn" onclick="handleMJStudioAction('${l}')">${l}</button>`).join('');
+            container.style.display = 'flex';
+            document.getElementById('mjstudio-edit-actions').style.display = isUpscaledSingle ? 'flex' : 'none';
+        }
+        
+        async function handleMJStudioAction(label) {
+            if (!mjStudioState.taskId) { alert('No active Midjourney task'); return; }
+            document.getElementById('mjstudio-loading').classList.add('show');
+            document.getElementById('mjstudio-status').className = 'status pending';
+            document.getElementById('mjstudio-status').textContent = `⏳ Executing ${label}...`;
+            
+            try {
+                let data;
+                if (label === 'REROLL') {
+                    data = await mjImagine({ prompt: mjStudioState.prompt, aspect: mjStudioState.aspect, noWait: true });
+                } else if (label.startsWith('U')) {
+                    data = await mjUpscale({ taskId: mjStudioState.taskId, button: label, buttons: mjStudioState.buttons });
+                } else {
+                    data = await mjVariation({ taskId: mjStudioState.taskId, button: label, buttons: mjStudioState.buttons });
+                }
+                if (!data.success || !data.jobId) throw new Error(`${label} submission failed`);
+                mjStudioState.taskId = data.jobId;
+                mjStudioState.buttons = [];
+                mjStudioState.lastAction = label === 'REROLL' ? 'reroll' : (label.startsWith('U') ? 'upscale' : 'variation');
+                mjStudioState.lastButton = label;
+                await pollMJStudioStatus(data.jobId);
+            } catch (err) {
+                document.getElementById('mjstudio-status').className = 'status error';
+                document.getElementById('mjstudio-status').textContent = '❌ ' + err.message;
+            } finally {
+                document.getElementById('mjstudio-loading').classList.remove('show');
+            }
+        }
+        
+        function sendCurrentMJToEdit() {
+            if (!mjStudioState.originalUrl) { alert('No result image available'); return; }
+            const isUpscaledSingle = /upscale|upsample/i.test(mjStudioState.lastAction || '') || /^U[1-4]$/i.test(mjStudioState.lastButton || '');
+            if (!isUpscaledSingle) {
+                alert('This is a 4-quadrant grid. Please click U1/U2/U3/U4 to upscale your target image first, then use MJ Edit.');
+                return;
+            }
+            useForMJEdit(mjStudioState.originalUrl);
+        }
+        function useCurrentMJInEdit(editPrompt) {
+            if (!mjStudioState.originalUrl) { alert('No result image available'); return; }
+            const isUpscaledSingle = /upscale|upsample/i.test(mjStudioState.lastAction || '') || /^U[1-4]$/i.test(mjStudioState.lastButton || '');
+            if (!isUpscaledSingle) {
+                alert('This is a 4-quadrant grid. Use U1-U4 to select and upscale the image you want to edit first.');
+                return;
+            }
+            document.getElementById('edit-image-url').value = mjStudioState.originalUrl;
+            document.getElementById('edit-prompt').value = editPrompt;
+            switchTab('edit', document.querySelector('.tab[data-tab="edit"]'));
+            document.getElementById('edit-prompt').focus();
+        }
+        
+        async function generateImage() {
+            const prompt = document.getElementById('image-prompt').value;
+            const model = document.getElementById('image-model').value;
+            const size = document.getElementById('image-size').value;
+            
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+            
+            document.getElementById('image-loading').classList.add('show');
+            document.getElementById('image-result').classList.remove('show');
+            document.getElementById('mj-actions').style.display = 'none';
+            document.getElementById('mj-actions').innerHTML = '';
+            
+            try {
+                if (model === 'midjourney') {
+                    document.getElementById('image-status').className = 'status pending';
+                    document.getElementById('image-status').textContent = '⏳ Midjourney submitting (Relax mode, usually 1-2 min)...';
+                    document.getElementById('image-result').classList.add('show');
+
+                    const data = await mjImagine({
+                        prompt,
+                        aspect: size === '1024x1536' ? '2:3' : size === '1536x1024' ? '3:2' : '1:1',
+                        noWait: true
+                    });
+                    if (!data.success || !data.jobId) {
+                        throw new Error('Midjourney submission failed');
+                    }
+
+                    currentMJ = {
+                        taskId: data.jobId,
+                        buttons: [],
+                        prompt,
+                        aspect: size === '1024x1536' ? '2:3' : size === '1536x1024' ? '3:2' : '1:1',
+                        imageUrl: null,
+                        originalUrl: null
+                    };
+
+                    document.getElementById('image-status').className = 'status pending';
+                    document.getElementById('image-status').textContent = `⏳ Midjourney task submitted: ${data.jobId}, checking every 20s...`;
+                    await pollMJStatus(data.jobId);
+                    return;
+                }
+
+                // Kling Image async polling
+                if (model.startsWith('kling-image')) {
+                    document.getElementById('image-status').className = 'status pending';
+                    document.getElementById('image-status').textContent = '⏳ Kling Image submitting...';
+                    document.getElementById('image-result').classList.add('show');
+
+                    const aspectRatio = size === '1024x1536' ? '9:16' : size === '1536x1024' ? '16:9' : '1:1';
+                    const data = await generateKlingImage({ prompt, model, aspectRatio });
+                    if (!data.success || !data.jobId) {
+                        throw new Error('Kling Image submission failed');
+                    }
+
+                    document.getElementById('image-status').className = 'status pending';
+                    document.getElementById('image-status').textContent = `⏳ Kling Image task submitted: ${data.jobId}, checking every 10s...`;
+                    await pollKlingImageStatus(data.jobId);
+                    return;
+                }
+
+                const data = await proxyGenerate({ mode: 'text-to-image', prompt, model, size });
+                
+                if (data.success && data.images) {
+                    document.getElementById('image-status').className = 'status success';
+                    document.getElementById('image-status').textContent = `✅ Generation complete! Price: ${data.price || 'N/A'}`;
+                    document.getElementById('image-output').src = data.images[0].url;
+                    document.getElementById('image-result').classList.add('show');
+                    saveToGallery('image', data.images[0].url, prompt, model);
+                } else {
+                    throw new Error(data.error || 'Generation failed');
+                }
+            } catch (err) {
+                document.getElementById('image-status').className = 'status error';
+                document.getElementById('image-status').textContent = '❌ ' + err.message;
+                document.getElementById('image-result').classList.add('show');
+            } finally {
+                document.getElementById('image-loading').classList.remove('show');
+            }
+        }
+
+        async function pollKlingImageStatus(taskId) {
+            const checkStatus = async () => {
+                try {
+                    const data = await checkKlingStatus(taskId);
+
+                    if (data.status === 'completed') {
+                        document.getElementById('image-status').className = 'status success';
+                        document.getElementById('image-status').textContent = `✅ Kling Image complete! Price: ${data.price || '¥0.15'}`;
+                        document.getElementById('image-output').src = data.imageUrl;
+                        document.getElementById('image-result').classList.add('show');
+                        saveToGallery('image', data.imageUrl, document.getElementById('image-prompt').value, 'kling-image-v2-1');
+                    } else if (data.status === 'failure' || data.status === 'failed' || data.error) {
+                        throw new Error(data.message || data.error || 'Kling Image generation failed');
+                    } else {
+                        document.getElementById('image-status').className = 'status pending';
+                        document.getElementById('image-status').textContent = `⏳ Kling Image generating (task ${taskId}), checking in 10s...`;
+                        setTimeout(checkStatus, 10000);
+                    }
+                } catch (err) {
+                    document.getElementById('image-status').className = 'status error';
+                    document.getElementById('image-status').textContent = '❌ ' + err.message;
+                    document.getElementById('image-result').classList.add('show');
+                }
+            };
+            checkStatus();
+        }
+
+        async function pollMJStatus(taskId) {
+            const container = document.getElementById('mj-actions');
+            const labels = ['U1','U2','U3','U4','V1','V2','V3','V4','REROLL'];
+            container.innerHTML = labels.map(label =>
+                `<button class="mj-btn" onclick="handleMJAction('${label}')">${label}</button>`
+            ).join('');
+            container.style.display = 'flex';
+        }
+
+        async function handleMJAction(label) {
+            if (!currentMJ.taskId) {
+                alert('No active Midjourney task');
+                return;
+            }
+
+            document.getElementById('image-loading').classList.add('show');
+            document.getElementById('image-status').className = 'status pending';
+            document.getElementById('image-status').textContent = `⏳ Executing ${label}...`;
+
+            try {
+                let data;
+                if (label === 'REROLL') {
+                    data = await mjImagine({
+                        prompt: currentMJ.prompt,
+                        aspect: currentMJ.aspect,
+                        noWait: true
+                    });
+                } else if (label.startsWith('U')) {
+                    data = await mjUpscale({
+                        taskId: currentMJ.taskId,
+                        button: label,
+                        buttons: currentMJ.buttons
+                    });
+                } else {
+                    data = await mjVariation({
+                        taskId: currentMJ.taskId,
+                        button: label,
+                        buttons: currentMJ.buttons
+                    });
+                }
+
+                if (!data.success || !data.jobId) {
+                    throw new Error(`${label} submission failed`);
+                }
+
+                currentMJ.taskId = data.jobId;
+                currentMJ.buttons = [];
+                await pollMJStatus(data.jobId);
+            } catch (err) {
+                document.getElementById('image-status').className = 'status error';
+                document.getElementById('image-status').textContent = '❌ ' + err.message;
+            } finally {
+                document.getElementById('image-loading').classList.remove('show');
+            }
+        }
+
+        async function generateMJEdit() {
+            const imageUrl = document.getElementById('edit-image-url').value;
+            const prompt = document.getElementById('edit-prompt').value;
+            const aspect = document.getElementById('edit-aspect').value;
+            const mask = document.getElementById('edit-mask').value;
+
+            if (!imageUrl || !prompt) {
+                alert('Please enter the original image URL and edit prompt');
+                return;
+            }
+
+            document.getElementById('edit-loading').classList.add('show');
+            document.getElementById('edit-result').classList.remove('show');
+
+            try {
+                const data = await mjImagine({ prompt, aspect, noWait: true, images: [imageUrl] });
+                if (!data.success || !data.jobId) {
+                    throw new Error('MJ edit submission failed');
+                }
+
+                document.getElementById('edit-status').className = 'status pending';
+                document.getElementById('edit-status').textContent = `⏳ MJ edit submitted: ${data.jobId}, checking every 20s...`;
+                document.getElementById('edit-result').classList.add('show');
+
+                await pollMJEditStatus(data.jobId);
+            } catch (err) {
+                document.getElementById('edit-status').className = 'status error';
+                document.getElementById('edit-status').textContent = '❌ ' + err.message;
+                document.getElementById('edit-result').classList.add('show');
+            } finally {
+                document.getElementById('edit-loading').classList.remove('show');
+            }
+        }
+
+        async function pollMJEditStatus(taskId) {
+            const checkStatus = async () => {
+                try {
+                    const data = await checkMJStatus(taskId);
+
+                    if (data.status === 'completed') {
+                        document.getElementById('edit-status').className = 'status success';
+                        document.getElementById('edit-status').textContent = `✅ MJ edit complete! Price: ${data.price || '¥1.00'}`;
+                        document.getElementById('edit-output').src = data.imageUrl;
+                        saveToGallery('image', data.imageUrl, document.getElementById('edit-prompt').value, 'mj-edits');
+                    } else if (data.status === 'failure' || data.status === 'failed' || data.error) {
+                        throw new Error(data.message || data.error || 'MJ edit failed');
+                    } else {
+                        document.getElementById('edit-status').className = 'status pending';
+                        document.getElementById('edit-status').textContent = `⏳ MJ editing (task ${taskId}), checking in 20s...`;
+                        setTimeout(checkStatus, 20000);
+                    }
+                } catch (err) {
+                    document.getElementById('edit-status').className = 'status error';
+                    document.getElementById('edit-status').textContent = '❌ ' + err.message;
+                }
+            };
+            checkStatus();
+        }
+        
+        function toggleNanoBananaMode() {
+            const mode = document.getElementById('nanobanana-mode')?.value || 'generate';
+            const imageGroup = document.getElementById('nanobanana-image-group');
+            if (imageGroup) imageGroup.style.display = mode === 'edit' ? 'block' : 'none';
+        }
+
+        async function generateNanoBanana() {
+            const mode = document.getElementById('nanobanana-mode').value;
+            const prompt = document.getElementById('nanobanana-prompt').value;
+            const aspect = document.getElementById('nanobanana-aspect').value;
+            const refImages = getRefImages('nanobanana');
+            const singleImageUrl = document.getElementById('nanobanana-image-url')?.value;
+
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+
+            document.getElementById('nanobanana-loading').classList.add('show');
+            document.getElementById('nanobanana-result').classList.remove('show');
+
+            try {
+                let data;
+                if (mode === 'edit' && singleImageUrl) {
+                    data = await nanoBananaEdit({ prompt, image: singleImageUrl, aspect });
+                } else {
+                    data = await nanoBananaGenerate({ prompt, aspect, images: refImages.length > 0 ? refImages : undefined });
+                }
+
+                if (data.success && data.images && data.images[0]) {
+                    document.getElementById('nanobanana-status').className = 'status success';
+                    document.getElementById('nanobanana-status').textContent = `✅ NanoBanana complete! Price: ${data.price || '¥2.00'}`;
+                    document.getElementById('nanobanana-output').src = data.images[0].url;
+                    document.getElementById('nanobanana-result').classList.add('show');
+                    saveToGallery('image', data.images[0].url, prompt, 'nano-banana-pro-4k');
+                } else {
+                    throw new Error(data.error || 'NanoBanana failed');
+                }
+            } catch (err) {
+                document.getElementById('nanobanana-status').className = 'status error';
+                document.getElementById('nanobanana-status').textContent = '❌ ' + err.message;
+                document.getElementById('nanobanana-result').classList.add('show');
+            } finally {
+                document.getElementById('nanobanana-loading').classList.remove('show');
+            }
+        }
+
+        async function pollNanoBananaStatus(taskId) {
+            const checkStatus = async () => {
+                try {
+                    const data = await checkNanoBananaStatus(taskId);
+
+                    if (data.success && data.images && data.images[0]) {
+                        document.getElementById('nanobanana-status').className = 'status success';
+                        document.getElementById('nanobanana-status').textContent = `✅ NanoBanana complete! Price: ${data.price || '¥2.00'}`;
+                        document.getElementById('nanobanana-output').src = data.images[0].url;
+                        document.getElementById('nanobanana-result').classList.add('show');
+                        saveToGallery('image', data.images[0].url, document.getElementById('nanobanana-prompt').value, 'nano-banana-pro-4k');
+                    } else if (data.status === 'failure' || data.status === 'failed' || data.error) {
+                        throw new Error(data.message || data.error || 'NanoBanana failed');
+                    } else {
+                        document.getElementById('nanobanana-status').className = 'status pending';
+                        document.getElementById('nanobanana-status').textContent = `⏳ NanoBanana processing (task ${taskId}), checking in 10s...`;
+                        setTimeout(checkStatus, 10000);
+                    }
+                } catch (err) {
+                    document.getElementById('nanobanana-status').className = 'status error';
+                    document.getElementById('nanobanana-status').textContent = '❌ ' + err.message;
+                }
+            };
+            checkStatus();
+        }
+
+        async function generateVideo() {
+            const prompt = document.getElementById('video-prompt').value;
+            const model = document.getElementById('video-model').value;
+            const duration = document.getElementById('video-duration').value;
+            const ratio = document.getElementById('video-ratio').value;
+            
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+            
+            document.getElementById('video-loading').classList.add('show');
+            document.getElementById('video-result').classList.remove('show');
+            
+            try {
+                let data;
+                if (model.startsWith('kling')) {
+                    data = await generateKlingVideo({ mode: 'text-to-video', prompt, model, duration: parseInt(duration), aspectRatio: ratio });
+                } else if (model.startsWith('runway')) {
+                    data = await generateRunwayVideo({ mode: 'text-to-video', prompt, model, duration: parseInt(duration), aspectRatio: ratio });
+                } else if (model.startsWith('wan')) {
+                    data = await generateWanVideo({ mode: 'text-to-video', prompt, model, duration: parseInt(duration), aspectRatio: ratio });
+                } else {
+                    throw new Error('Unsupported video model: ' + model);
+                }
+
+                if (data.success && data.jobId) {
+                    document.getElementById('video-status').className = 'status pending';
+                    document.getElementById('video-status').textContent = `⏳ Task submitted: ${data.jobId}, processing...`;
+                    document.getElementById('video-result').classList.add('show');
+                    
+                    // Poll status
+                    pollVideoStatus(data.jobId, model);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+            } catch (err) {
+                document.getElementById('video-status').className = 'status error';
+                document.getElementById('video-status').textContent = '❌ ' + err.message;
+                document.getElementById('video-result').classList.add('show');
+                document.getElementById('video-loading').classList.remove('show');
+            }
+        }
+        
+        async function pollVideoStatus(jobId, model) {
+            const checkStatus = async () => {
+                try {
+                    let data;
+                    if (model.startsWith('kling')) {
+                        data = await checkKlingStatus(jobId);
+                    } else if (model.startsWith('runway')) {
+                        data = await checkRunwayStatus(jobId);
+                    } else if (model.startsWith('wan')) {
+                        data = await checkWanStatus(jobId);
+                    } else {
+                        throw new Error('Unsupported video model: ' + model);
+                    }
+                    
+                    if (data.status === 'completed' || data.status === 'succeeded') {
+                        document.getElementById('video-status').className = 'status success';
+                        document.getElementById('video-status').textContent = '✅ Video generation complete!';
+                        document.getElementById('video-output').src = data.videoUrl;
+                        document.getElementById('video-loading').classList.remove('show');
+                        saveToGallery('video', data.videoUrl, document.getElementById('video-prompt').value, model);
+                    } else if (data.status === 'failed' || data.status === 'error') {
+                        throw new Error(data.message || 'Generation failed');
+                    } else {
+                        setTimeout(checkStatus, 5000);
+                    }
+                } catch (err) {
+                    document.getElementById('video-status').className = 'status error';
+                    document.getElementById('video-status').textContent = '❌ ' + err.message;
+                    document.getElementById('video-loading').classList.remove('show');
+                }
+            };
+            
+            checkStatus();
+        }
+        
+        function saveToGallery(type, url, prompt, model) {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            gallery.unshift({
+                type,
+                url,
+                prompt,
+                model,
+                time: new Date().toISOString()
+            });
+            const max = parseInt(localStorage.getItem('gallery_max') || '50');
+            localStorage.setItem('gallery', JSON.stringify(gallery.slice(0, max)));
+        }
+        
+        function loadGallery() {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const grid = document.getElementById('gallery-grid');
+            
+            if (gallery.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;color:#888;">No items in gallery</p>';
+                return;
+            }
+            
+            grid.innerHTML = gallery.map((item, index) => `
+                <div class="gallery-item">
+                    ${item.type === 'image' 
+                        ? `<img src="${item.url}" alt="">`
+                        : `<video src="${item.url}" controls></video>`
+                    }
+                    <div class="info">
+                        <h4>${item.model}</h4>
+                        <p>${item.prompt.slice(0, 50)}...</p>
+                        <p>${new Date(item.time).toLocaleString()}</p>
+                        ${item.type === 'image' ? `
+                            <button class="mj-btn" onclick="useForMJEdit('${item.url}')" style="margin-top:10px;width:100%;">✏️ Use for MJ Edit</button>
+                            <button class="mj-btn" onclick="openLightbox('${item.url}')" style="margin-top:5px;width:100%;">🔍 View Full Size</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function useForMJEdit(imageUrl) {
+            document.getElementById('edit-image-url').value = imageUrl;
+            switchTab('edit', document.querySelector('.tab[data-tab="edit"]'));
+            document.getElementById('edit-prompt').focus();
+        }
+
+        // ==================== Kling Studio ====================
+        let klingState = { taskId: null, resultUrl: null, resultType: null };
+
+        function onKlingModeChange() {
+            const mode = document.getElementById('kling-mode').value;
+            const mediaGroup = document.getElementById('kling-media-group');
+            const videoGroup = document.getElementById('kling-video-group');
+            const audioGroup = document.getElementById('kling-audio-group');
+            const promptLabel = document.getElementById('kling-prompt-label');
+            const modelSelect = document.getElementById('kling-model');
+            const aspectSelect = document.getElementById('kling-aspect');
+            const durationSelect = document.getElementById('kling-duration');
+            const cameraSelect = document.getElementById('kling-camera');
+
+            // Hide all mode-specific inputs
+            mediaGroup.style.display = 'none';
+            videoGroup.style.display = 'none';
+            audioGroup.style.display = 'none';
+
+            // Show inputs based on mode
+            switch(mode) {
+                case 'video-t2v':
+                    promptLabel.textContent = 'Prompt';
+                    modelSelect.innerHTML = `
+                        <option value="kling-v2-6">Kling V2.6 <span class="price-tag">¥2.50</span></option>
+                        <option value="kling-o1">Kling O1 <span class="price-tag">¥0.80</span></option>
+                        <option value="kling-v2-5-turbo">Kling V2.5 Turbo <span class="price-tag">¥1.50</span></option>
+                    `;
+                    aspectSelect.disabled = false;
+                    durationSelect.disabled = false;
+                    cameraSelect.disabled = false;
+                    break;
+                case 'video-i2v':
+                    promptLabel.textContent = 'Prompt';
+                    mediaGroup.style.display = 'block';
+                    document.getElementById('kling-media-label').textContent = 'Image URL';
+                    modelSelect.innerHTML = `
+                        <option value="kling-v2-6">Kling V2.6 <span class="price-tag">¥2.50</span></option>
+                        <option value="kling-o1">Kling O1 <span class="price-tag">¥0.80</span></option>
+                    `;
+                    aspectSelect.disabled = false;
+                    durationSelect.disabled = false;
+                    cameraSelect.disabled = false;
+                    break;
+                case 'image':
+                    promptLabel.textContent = 'Prompt';
+                    modelSelect.innerHTML = `
+                        <option value="kling-image-v2-1">Kling Image 2.1 <span class="price-tag">¥0.15</span></option>
+                        <option value="kling-image-v2">Kling Image V2 <span class="price-tag">¥0.15</span></option>
+                    `;
+                    aspectSelect.disabled = false;
+                    durationSelect.disabled = true;
+                    cameraSelect.disabled = true;
+                    break;
+                case 'video-to-audio':
+                    promptLabel.textContent = 'Audio description (optional)';
+                    videoGroup.style.display = 'block';
+                    modelSelect.innerHTML = `
+                        <option value="kling-video-to-audio">Video-to-Audio <span class="price-tag">¥0.50</span></option>
+                    `;
+                    aspectSelect.disabled = true;
+                    durationSelect.disabled = true;
+                    cameraSelect.disabled = true;
+                    break;
+                case 'lip-sync':
+                    promptLabel.textContent = 'Description (optional)';
+                    mediaGroup.style.display = 'block';
+                    audioGroup.style.display = 'block';
+                    document.getElementById('kling-media-label').textContent = 'Character image or video URL';
+                    modelSelect.innerHTML = `
+                        <option value="kling-lip-sync">Lip Sync <span class="price-tag">¥1.00</span></option>
+                    `;
+                    aspectSelect.disabled = true;
+                    durationSelect.disabled = true;
+                    cameraSelect.disabled = true;
+                    break;
+            }
+        }
+
+        function switchKlingMode(mode) {
+            document.getElementById('kling-mode').value = mode;
+            onKlingModeChange();
+        }
+
+        async function generateKling() {
+            const mode = document.getElementById('kling-mode').value;
+            const prompt = document.getElementById('kling-prompt').value;
+            const model = document.getElementById('kling-model').value;
+            const aspectRatio = document.getElementById('kling-aspect').value;
+            const duration = document.getElementById('kling-duration').value;
+            const cameraMotion = document.getElementById('kling-camera').value;
+            const mediaUrl = document.getElementById('kling-media-url')?.value;
+            const videoUrl = document.getElementById('kling-video-url')?.value;
+            const audioUrl = document.getElementById('kling-audio-url')?.value;
+
+            // Validate inputs
+            if (mode === 'video-to-audio' && !videoUrl) {
+                alert('Please enter a video URL');
+                return;
+            }
+            if (mode === 'lip-sync' && !mediaUrl) {
+                alert('Please enter an image or video URL');
+                return;
+            }
+            if (mode === 'lip-sync' && !audioUrl) {
+                alert('Please enter an audio URL');
+                return;
+            }
+
+            document.getElementById('kling-loading').classList.add('show');
+            document.getElementById('kling-result').classList.remove('show');
+            document.getElementById('kling-follow-actions').style.display = 'none';
+
+            try {
+                let data;
+
+                switch(mode) {
+                    case 'video-t2v':
+                        data = await generateKlingVideo({
+                            mode: 'text-to-video',
+                            prompt,
+                            model,
+                            duration: parseInt(duration),
+                            aspectRatio,
+                            camera_motion: cameraMotion || undefined
+                        });
+                        break;
+                    case 'video-i2v':
+                        data = await generateKlingVideo({
+                            mode: 'image-to-video',
+                            prompt,
+                            model,
+                            imageUrl: mediaUrl,
+                            duration: parseInt(duration),
+                            aspectRatio,
+                            camera_motion: cameraMotion || undefined
+                        });
+                        break;
+                    case 'image':
+                        data = await generateKlingImage({ prompt, model, aspectRatio });
+                        break;
+                    case 'video-to-audio':
+                        data = await proxyGenerate({ mode: 'kling-video-to-audio', videoUrl, prompt: prompt || 'generate matching sound effects' });
+                        break;
+                    case 'lip-sync':
+                        data = await proxyGenerate({ mode: 'kling-lip-sync', imageUrl: mediaUrl, audioUrl });
+                        break;
+                }
+
+                if (data.success && (data.jobId || data.taskId)) {
+                    const taskId = data.jobId || data.taskId;
+                    document.getElementById('kling-status').className = 'status pending';
+                    document.getElementById('kling-status').textContent = `⏳ Kling task submitted: ${taskId}`;
+                    document.getElementById('kling-result').classList.add('show');
+                    klingState.taskId = taskId;
+                    await pollKlingStatus(taskId, model, mode);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+            } catch (err) {
+                document.getElementById('kling-status').className = 'status error';
+                document.getElementById('kling-status').textContent = '❌ ' + err.message;
+                document.getElementById('kling-result').classList.add('show');
+            } finally {
+                document.getElementById('kling-loading').classList.remove('show');
+            }
+        }
+
+        async function pollKlingStatus(taskId, model, mode) {
+            const checkStatus = async () => {
+                try {
+                    let type = 'video';
+                    if (mode === 'image') type = 'image';
+                    if (mode === 'video-to-audio') type = 'audio';
+                    if (mode === 'lip-sync') type = 'avatar';
+
+                    const data = await checkKlingStatus(taskId);
+
+                    if (data.status === 'completed') {
+                        document.getElementById('kling-status').className = 'status success';
+                        document.getElementById('kling-status').textContent = '✅ Kling task complete!';
+
+                        const container = document.getElementById('kling-output-container');
+                        const url = data.url || data.videoUrl || data.imageUrl || data.audioUrl;
+
+                        if (mode === 'image' && data.imageUrl) {
+                            container.innerHTML = `<img src="${data.imageUrl}" style="max-width:100%;border-radius:10px;">`;
+                            klingState.resultUrl = data.imageUrl;
+                            klingState.resultType = 'image';
+                            saveToGallery('image', data.imageUrl, document.getElementById('kling-prompt').value, model);
+                        } else if (mode === 'video-to-audio' && data.audioUrl) {
+                            container.innerHTML = `<audio src="${data.audioUrl}" controls style="width:100%;"></audio>`;
+                            klingState.resultUrl = data.audioUrl;
+                            klingState.resultType = 'audio';
+                        } else if (data.videoUrl) {
+                            container.innerHTML = `<video src="${data.videoUrl}" controls style="max-width:100%;border-radius:10px;"></video>`;
+                            klingState.resultUrl = data.videoUrl;
+                            klingState.resultType = 'video';
+                            saveToGallery('video', data.videoUrl, document.getElementById('kling-prompt').value, model);
+                            document.getElementById('kling-follow-actions').style.display = 'flex';
+                        }
+                    } else if (data.status === 'failed' || data.status === 'error' || data.error) {
+                        throw new Error(data.message || data.error || 'Generation failed');
+                    } else {
+                        document.getElementById('kling-status').textContent = `⏳ Generating: ${taskId}`;
+                        setTimeout(checkStatus, 10000);
+                    }
+                } catch (err) {
+                    document.getElementById('kling-status').className = 'status error';
+                    document.getElementById('kling-status').textContent = '❌ ' + err.message;
+                }
+            };
+            checkStatus();
+        }
+
+        function useKlingResultForAudio() {
+            if (!klingState.resultUrl || klingState.resultType !== 'video') {
+                alert('No video result available');
+                return;
+            }
+            document.getElementById('kling-mode').value = 'video-to-audio';
+            onKlingModeChange();
+            document.getElementById('kling-video-url').value = klingState.resultUrl;
+            document.getElementById('kling-prompt').value = 'generate matching sound effects';
+        }
+
+        function useKlingResultForLipSync() {
+            if (!klingState.resultUrl || klingState.resultType !== 'video') {
+                alert('No video result available');
+                return;
+            }
+            document.getElementById('kling-mode').value = 'lip-sync';
+            onKlingModeChange();
+            document.getElementById('kling-media-url').value = klingState.resultUrl;
+        }
+
+        async function extendKlingVideo() {
+            if (!klingState.resultUrl || klingState.resultType !== 'video') {
+                alert('No video result available');
+                return;
+            }
+
+            const model = document.getElementById('kling-model')?.value || 'kling-video-v2-6';
+            const prompt = prompt('Enter extension description (optional, leave empty to use original):') || '';
+
+            // Update UI state
+            klingState.currentJobId = null;
+            klingState.resultUrl = null;
+            klingState.resultType = null;
+            document.getElementById('kling-status').textContent = '⏳ Extending video...';
+
+            try {
+                const data = await generateKlingVideo({ mode: 'video-extend', prompt: prompt || 'Extend the video', imageUrl: klingState.resultUrl, model, duration: 5 });
+                if (data.success && data.jobId) {
+                    klingState.currentJobId = data.jobId;
+                    document.getElementById('kling-status').textContent = `⏳ Extending video: ${data.jobId}`;
+                    pollKlingStatus(data.jobId, model);
+                } else {
+                    throw new Error(data.error || 'Video extension failed');
+                }
+            } catch (err) {
+                document.getElementById('kling-status').textContent = `❌ ${err.message}`;
+            }
+        }
+
+        function loadFromGallery(inputId, type) {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const items = gallery.filter(item => item.type === type);
+
+            if (items.length === 0) {
+                alert(`No ${type === 'image' ? 'images' : 'videos'} in gallery`);
+                return;
+            }
+
+            // Create selection dialog
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                flex-direction: column;
+                z-index: 9999;
+                padding: 20px;
+            `;
+
+            const title = document.createElement('h3');
+            title.textContent = `Select ${type === 'image' ? 'Image' : 'Video'}`;
+            title.style.cssText = 'color: white; text-align: center; margin-bottom: 20px;';
+            modal.appendChild(title);
+
+            const grid = document.createElement('div');
+            grid.style.cssText = `
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+                overflow-y: auto;
+                flex: 1;
+            `;
+
+            items.slice(0, 20).forEach(item => {
+                const div = document.createElement('div');
+                div.style.cssText = `
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 10px;
+                    padding: 10px;
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                `;
+                div.innerHTML = type === 'image'
+                    ? `<img src="${item.url}" style="width:100%;height:150px;object-fit:cover;border-radius:8px;"><p style="color:#aaa;font-size:12px;margin-top:8px;">${item.prompt?.slice(0, 30) || 'No description'}...</p>`
+                    : `<video src="${item.url}" style="width:100%;height:150px;object-fit:cover;border-radius:8px;"></video><p style="color:#aaa;font-size:12px;margin-top:8px;">${item.prompt?.slice(0, 30) || 'No description'}...</p>`;
+                div.onclick = () => {
+                    document.getElementById(inputId).value = item.url;
+                    document.body.removeChild(modal);
+                };
+                div.onmouseenter = () => div.style.transform = 'scale(1.02)';
+                div.onmouseleave = () => div.style.transform = 'scale(1)';
+                grid.appendChild(div);
+            });
+
+            modal.appendChild(grid);
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = `
+                margin-top: 20px;
+                padding: 10px 30px;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                border-radius: 20px;
+                color: white;
+                cursor: pointer;
+                align-self: center;
+            `;
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            modal.appendChild(closeBtn);
+
+            document.body.appendChild(modal);
+        }
+
+        // Lightbox viewer
+        function openLightbox(imageUrl) {
+            const modal = document.createElement('div');
+            modal.id = 'lightbox-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                cursor: zoom-out;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            `;
+            
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 40px;
+                color: white;
+                font-size: 40px;
+                font-weight: bold;
+                cursor: pointer;
+                z-index: 10000;
+            `;
+            
+            modal.appendChild(img);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+            
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target === closeBtn) {
+                    document.body.removeChild(modal);
+                }
+            };
+            
+            document.onkeydown = (e) => {
+                if (e.key === 'Escape') {
+                    const m = document.getElementById('lightbox-modal');
+                    if (m) document.body.removeChild(m);
+                }
+            };
+        }
+
+        // ==================== Reference Image Management (NanoBanana + MJ) ====================
+        const refImageStates = { mjstudio: [], nanobanana: [] };
+
+        function addRefImage(panel, source) {
+            const state = refImageStates[panel];
+            if (state.length >= 4) { alert('Maximum 4 reference images'); return; }
+            if (source === 'file') { triggerFileUpload(panel); }
+            else if (source === 'url') { promptImageUrl(panel); }
+            else if (source === 'gallery') { loadFromGalleryForRef(panel); }
+        }
+
+        function triggerFileUpload(panel) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    refImageStates[panel].push(ev.target.result);
+                    renderRefImages(panel);
+                };
+                reader.readAsDataURL(file);
+            };
+            input.click();
+        }
+
+        function promptImageUrl(panel) {
+            const url = prompt('Enter image URL:');
+            if (url && url.trim()) {
+                refImageStates[panel].push(url.trim());
+                renderRefImages(panel);
+            }
+        }
+
+        function loadFromGalleryForRef(panel) {
+            const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+            const items = gallery.filter(item => item.type === 'image');
+            if (items.length === 0) { alert('No images in gallery'); return; }
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;z-index:9999;padding:20px;';
+            const title = document.createElement('h3');
+            title.textContent = 'Select Reference Image';
+            title.style.cssText = 'color:white;text-align:center;margin-bottom:20px;';
+            modal.appendChild(title);
+            const grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:15px;overflow-y:auto;flex:1;';
+            items.slice(0, 20).forEach(item => {
+                const div = document.createElement('div');
+                div.style.cssText = 'background:rgba(255,255,255,0.1);border-radius:10px;padding:10px;cursor:pointer;transition:transform 0.2s;';
+                div.innerHTML = `<img src="${item.url}" style="width:100%;height:150px;object-fit:cover;border-radius:8px;"><p style="color:#aaa;font-size:12px;margin-top:8px;">${item.prompt?.slice(0, 30) || ''}...</p>`;
+                div.onclick = () => {
+                    if (refImageStates[panel].length < 4) {
+                        refImageStates[panel].push(item.url);
+                        renderRefImages(panel);
+                        document.body.removeChild(modal);
+                    } else { alert('Maximum 4 images'); }
+                };
+                div.onmouseenter = () => div.style.transform = 'scale(1.02)';
+                div.onmouseleave = () => div.style.transform = 'scale(1)';
+                grid.appendChild(div);
+            });
+            modal.appendChild(grid);
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = 'Close';
+            closeBtn.style.cssText = 'margin-top:20px;padding:10px 30px;background:rgba(255,255,255,0.2);border:none;border-radius:20px;color:white;cursor:pointer;align-self:center;';
+            closeBtn.onclick = () => document.body.removeChild(modal);
+            modal.appendChild(closeBtn);
+            document.body.appendChild(modal);
+        }
+
+        function renderRefImages(panel) {
+            const container = document.getElementById(`${panel}-ref-images`);
+            if (!container) return;
+            const state = refImageStates[panel];
+            container.innerHTML = state.map((url, i) => `
+                <div style="position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid rgba(255,255,255,0.2);">
+                    <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+                    <span onclick="removeRefImage('${panel}', ${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.7);color:#ff4444;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;">&times;</span>
+                </div>
+            `).join('');
+        }
+
+        function removeRefImage(panel, index) {
+            refImageStates[panel].splice(index, 1);
+            renderRefImages(panel);
+        }
+
+        function getRefImages(panel) {
+            return refImageStates[panel] || [];
+        }
+
+        function clearRefImages(panel) {
+            refImageStates[panel] = [];
+            renderRefImages(panel);
+        }
+
+        // Expose functions to window for HTML onclick handlers
+        window.switchTab = switchTab;
+        window.fillMJPrompt = fillMJPrompt;
+        window.fillMJEditPrompt = fillMJEditPrompt;
+        window.openSettings = openSettings;
+        window.closeSettings = closeSettings;
+        window.saveSettings = saveSettings;
+        window.generateMJStudioImage = generateMJStudioImage;
+        window.handleMJStudioAction = handleMJStudioAction;
+        window.sendCurrentMJToEdit = sendCurrentMJToEdit;
+        window.generateKling = generateKling;
+        window.extendKlingVideo = extendKlingVideo;
+        window.switchKlingMode = switchKlingMode;
+        window.generateImage = generateImage;
+        window.handleMJAction = handleMJAction;
+        window.generateMJEdit = generateMJEdit;
+        window.generateNanoBanana = generateNanoBanana;
+        window.toggleNanoBananaMode = toggleNanoBananaMode;
+        window.generateVideo = generateVideo;
+        window.loadGallery = loadGallery;
+        window.openLightbox = openLightbox;
+        window.addRefImage = addRefImage;
+        window.removeRefImage = removeRefImage;
+        window.promptImageUrl = promptImageUrl;
+        window.loadFromGallery = loadFromGallery;
+        window.loadFromGalleryForRef = loadFromGalleryForRef;
+        window.testApiConnection = testApiConnection;
+        window.exportGallery = exportGallery;
+        window.clearGallery = clearGallery;
+        window.resetAllSettings = resetAllSettings;
+    </script>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-box" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+            <h3>Settings</h3>
+
+            <!-- API Configuration -->
+            <div style="margin-bottom:20px;">
+                <h4 style="color:#00d4ff;font-size:0.9rem;margin-bottom:12px;">API Configuration</h4>
+                <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">API Base URL</label>
+                <input type="text" id="settings-api-url" placeholder="https://api.bltcy.ai" />
+                <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">API Key</label>
+                <input type="password" id="settings-api-key" placeholder="sk-..." />
+                <button class="mini-btn" onclick="testApiConnection()" style="margin-top:8px;width:100%;text-align:center;">🔗 Test Connection</button>
+                <p id="settings-api-test-msg" style="font-size:0.82rem;min-height:18px;margin-top:6px;"></p>
+            </div>
+
+            <!-- Default Preferences -->
+            <div style="margin-bottom:20px;">
+                <h4 style="color:#00d4ff;font-size:0.9rem;margin-bottom:12px;">Default Preferences</h4>
+                <div class="row">
+                    <div>
+                        <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">Default Aspect Ratio</label>
+                        <select id="settings-default-aspect">
+                            <option value="1:1">1:1 Square</option>
+                            <option value="2:3">2:3 Portrait</option>
+                            <option value="3:2">3:2 Landscape</option>
+                            <option value="9:16">9:16 Vertical</option>
+                            <option value="16:9" selected>16:9 Widescreen</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">Default Video Duration</label>
+                        <select id="settings-default-duration">
+                            <option value="5" selected>5 seconds</option>
+                            <option value="10">10 seconds</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:12px;">
+                    <div>
+                        <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">Default Image Model</label>
+                        <select id="settings-default-image-model">
+                            <option value="flux">Flux</option>
+                            <option value="kling-image-v2-1">Kling Image 2.1</option>
+                            <option value="midjourney">Midjourney</option>
+                            <option value="nano-banana-pro">NanoBanana Pro</option>
+                            <option value="openai-image">GPT Image 1</option>
+                            <option value="gpt-image-1.5">GPT Image 1.5</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">Default Video Model</label>
+                        <select id="settings-default-video-model">
+                            <option value="kling-o1">Kling O1</option>
+                            <option value="wan2.2-flash">Wan 2.2 Flash</option>
+                            <option value="kling-v2-6">Kling V2.6</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery -->
+            <div style="margin-bottom:20px;">
+                <h4 style="color:#00d4ff;font-size:0.9rem;margin-bottom:12px;">Gallery</h4>
+                <div class="row">
+                    <div>
+                        <label style="color:#aaa;font-size:0.85rem;margin-bottom:4px;display:block;">Max Items</label>
+                        <select id="settings-gallery-max">
+                            <option value="25">25</option>
+                            <option value="50" selected>50</option>
+                            <option value="100">100</option>
+                            <option value="200">200</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;align-items:flex-end;gap:8px;">
+                        <button class="mini-btn" onclick="exportGallery()" style="flex:1;text-align:center;">📤 Export</button>
+                        <button class="mini-btn" onclick="clearGallery()" style="flex:1;text-align:center;color:#ff6b6b;">🗑️ Clear All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About -->
+            <div style="margin-bottom:16px;">
+                <h4 style="color:#00d4ff;font-size:0.9rem;margin-bottom:12px;">About</h4>
+                <p style="color:#888;font-size:0.82rem;line-height:1.6;">
+                    OpenVideoAgent v1.0 — Open-source AI video & image generation.<br>
+                    Browser-direct API connection. Your keys stay local.
+                </p>
+                <button class="mini-btn" onclick="resetAllSettings()" style="margin-top:8px;color:#ff6b6b;">⚠️ Reset All Settings</button>
+            </div>
+
+            <p id="settings-msg" style="color:#00e676;font-size:0.85rem;min-height:20px;"></p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button class="btn-save" onclick="saveSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
